@@ -1,104 +1,94 @@
-package org.programmers.cocktail.search.service;
+package org.programmers.cocktail.search.service
 
-import jakarta.transaction.Transactional;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import org.programmers.cocktail.entity.Cocktails;
-import org.programmers.cocktail.repository.cocktails.CocktailsRepository;
-import org.programmers.cocktail.search.dto.CocktailsTO;
-import org.programmers.cocktail.search.enums.FindAllByOrderDescActionType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional
+import org.programmers.cocktail.repository.cocktails.CocktailsRepository
+import org.programmers.cocktail.search.dto.CocktailsTO
+import org.programmers.cocktail.search.enums.FindAllByOrderDescActionType
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 @Service
-public class CocktailsService {
-
-    static final int SUCCESS = 1;
-    static final int FAIL = 0;
+class CocktailsService {
+    @Autowired
+    private val cocktailsRepository: CocktailsRepository? = null
 
     @Autowired
-    private CocktailsRepository cocktailsRepository;
+    private val cocktailsMapper: CocktailsMapper? = null
 
-    @Autowired
-    private CocktailsMapper cocktailsMapper;
+    fun findAllByOrderDesc(findAllByOrderDescActionType: FindAllByOrderDescActionType): List<CocktailsTO> {
+        val cocktailsDescList =
+            if (findAllByOrderDescActionType == FindAllByOrderDescActionType.ORDER_BY_LIKES) {
+                cocktailsRepository!!.findAllByOrderByLikesDesc()
+            } else {
+                cocktailsRepository!!.findAllByOrderByHitsDesc()
+            }
 
-    public List<CocktailsTO> findAllByOrderDesc(FindAllByOrderDescActionType findAllByOrderDescActionType) {
-
-        List<Cocktails> cocktailsDescList;
-
-        if(findAllByOrderDescActionType == FindAllByOrderDescActionType.ORDER_BY_LIKES){
-            cocktailsDescList = cocktailsRepository.findAllByOrderByLikesDesc();
-        }
-        else{
-            cocktailsDescList = cocktailsRepository.findAllByOrderByHitsDesc();
-        }
-
-        return cocktailsMapper.convertToCocktailsTOList(cocktailsDescList);
+        return cocktailsMapper!!.convertToCocktailsTOList(cocktailsDescList)
     }
 
-    public List<CocktailsTO> findByNameContaining(String keyword) {
+    fun findByNameContaining(keyword: String?): List<CocktailsTO> {
+        val cocktailSearchList = cocktailsRepository!!.findByNameOrIngredients(keyword)
 
-        List<Cocktails> cocktailSearchList = cocktailsRepository.findByNameOrIngredients(keyword);
-
-        if(!cocktailSearchList.isEmpty()) {
-            return cocktailsMapper.convertToCocktailsTOList(cocktailSearchList);
+        if (!cocktailSearchList!!.isEmpty()) {
+            return cocktailsMapper!!.convertToCocktailsTOList(cocktailSearchList)
         }
 
-        return Collections.emptyList();
+        return emptyList()
     }
 
-    public int insertNewCocktailDBbyList(List<CocktailsTO> cocktailsTOList) {
+    fun insertNewCocktailDBbyList(cocktailsTOList: List<CocktailsTO?>): Int {
         try {
             //List<TO>->List<Entity> 변환
-            List<Cocktails> cocktailsList = cocktailsMapper.convertToCocktailsList(cocktailsTOList);
-            cocktailsRepository.saveAll(cocktailsList);
-            return SUCCESS;    //저장성공
-        } catch (Exception e) {
-            System.out.println("[저장실패] : "+e.getMessage());
-            return FAIL;       //저장실패
+            val cocktailsList = cocktailsMapper!!.convertToCocktailsList(cocktailsTOList)
+            cocktailsRepository!!.saveAll(cocktailsList)
+            return SUCCESS //저장성공
+        } catch (e: Exception) {
+            println("[저장실패] : " + e.message)
+            return FAIL //저장실패
         }
     }
 
-    public CocktailsTO findById(Long cocktailId){
-        Cocktails cocktails = cocktailsRepository.findById(cocktailId).orElse(null);
-        CocktailsTO cocktailsTO = cocktailsMapper.convertToCocktailsTO(cocktails);
+    fun findById(cocktailId: Long): CocktailsTO {
+        val cocktails = cocktailsRepository!!.findById(cocktailId).orElse(null)
+        val cocktailsTO = cocktailsMapper!!.convertToCocktailsTO(cocktails)
 
-        return cocktailsTO;
+        return cocktailsTO
     }
 
     @Transactional
-    public int updateCocktailHits(CocktailsTO cocktailsTO) {
-
+    fun updateCocktailHits(cocktailsTO: CocktailsTO): Int {
         // Pessimistic Lock 적용
-        Optional<Cocktails> cocktailsOptional = cocktailsRepository.findByIdWithPessimisticLock(cocktailsTO.getId());
 
-        if(!cocktailsOptional.isPresent()){
-            return FAIL;        // 칵테일 불러오기 실패
+        val cocktailsOptional =
+            cocktailsRepository!!.findByIdWithPessimisticLock(cocktailsTO.getId())
+
+        if (!cocktailsOptional!!.isPresent) {
+            return FAIL // 칵테일 불러오기 실패
         }
 
-        Cocktails cocktails = cocktailsOptional.get();
-        cocktails.setHits(cocktails.getHits()+1);
+        val cocktails = cocktailsOptional.get()
+        cocktails.setHits(cocktails.getHits() + 1)
 
-        cocktailsRepository.flush();
+        cocktailsRepository.flush()
 
-        return SUCCESS;
+        return SUCCESS
     }
 
-    public int updateCocktailLikesCount(CocktailsTO cocktailsTO) {
+    fun updateCocktailLikesCount(cocktailsTO: CocktailsTO): Int {
+        val cocktails = cocktailsRepository!!.findById(cocktailsTO.getId()).orElse(null)
+            ?: return FAIL
 
-        Cocktails cocktails = cocktailsRepository.findById(cocktailsTO.getId()).orElse(null);
+        cocktails.setLikes(cocktailsTO.getLikes())
 
-        if(cocktails == null){
-            return FAIL;
-        }
-        cocktails.setLikes(cocktailsTO.getLikes());
+        cocktailsRepository.flush()
 
-        cocktailsRepository.flush();
+        println(cocktails)
 
-        System.out.println(cocktails);
-
-        return SUCCESS;
+        return SUCCESS
     }
 
+    companion object {
+        const val SUCCESS: Int = 1
+        const val FAIL: Int = 0
+    }
 }
