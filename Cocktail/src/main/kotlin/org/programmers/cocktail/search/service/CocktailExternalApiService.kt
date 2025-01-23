@@ -1,82 +1,91 @@
-package org.programmers.cocktail.search.service;
+package org.programmers.cocktail.search.service
 
-import com.fasterxml.jackson.databind.JsonNode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.programmers.cocktail.entity.Cocktails;
-import org.programmers.cocktail.search.dto.CocktailsTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
+import com.fasterxml.jackson.databind.JsonNode
+import org.programmers.cocktail.entity.Cocktails
+import org.programmers.cocktail.search.dto.CocktailsTO
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import org.springframework.web.client.RestTemplate
 
 @Service
-public class CocktailExternalApiService {
+class CocktailExternalApiService {
+    @Autowired
+    private val restTemplate: RestTemplate? = null
 
     @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
-    private CocktailsMapper cocktailsMapper;
+    private val cocktailsMapper: CocktailsMapper? = null
 
     // 1. Cocktail 검색용
-    public List<CocktailsTO> fetchCocktailData(String cocktailName) {
-
+    fun fetchCocktailData(cocktailName: String): List<CocktailsTO> {
         // TheCocktailDB 호출 url - "Search cocktail by name" method
-        String url = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=" + cocktailName;
 
-        return parseJsonToCocktailsTOList(url);
+        val url =
+            "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=$cocktailName"
+
+        return parseJsonToCocktailsTOList(url)
     }
 
     // 2. 메인 페이지 출력용
-    public List<CocktailsTO> fetchCocktailData() {
-
+    fun fetchCocktailData(): List<CocktailsTO> {
         // TheCocktailDB 호출 url - "Lookup a random cocktail" method
-        String url = "https://www.thecocktaildb.com/api/json/v1/1/random.php";
 
-        return parseJsonToCocktailsTOList(url);
+        val url = "https://www.thecocktaildb.com/api/json/v1/1/random.php"
+
+        return parseJsonToCocktailsTOList(url)
     }
 
-    public List<CocktailsTO> parseJsonToCocktailsTOList (String url){
-        ResponseEntity<JsonNode> response = restTemplate.getForEntity(url, JsonNode.class);
+    fun parseJsonToCocktailsTOList(url: String): List<CocktailsTO> {
+        val response = restTemplate!!.getForEntity(
+            url,
+            JsonNode::class.java
+        )
 
         // JSON 데이터 가져오기
-        JsonNode drinksNode = response.getBody().get("drinks");
-        if (drinksNode == null || drinksNode.isEmpty()) {
+        val drinksNode = response.body!!["drinks"]
+        if (drinksNode == null || drinksNode.isEmpty) {
             // 외부 API에 검색결과 없는 경우 빈 리스트 반환
-            return Collections.emptyList();
+            return emptyList()
         }
 
         // 검색된 모든 칵테일 처리
-        List<Cocktails> cocktails = new ArrayList<>();
-        for (JsonNode drinkNode : drinksNode) {
-            String name = drinkNode.get("strDrink").asText();
-            StringBuilder ingredientsBuilder = new StringBuilder();
-            String recipes = drinkNode.get("strInstructions").asText();
-            String category = drinkNode.get("strCategory").asText();
-            String alcoholic = drinkNode.get("strAlcoholic").asText();
-            String image_url = drinkNode.get("strDrinkThumb").asText();
+        val cocktails: MutableList<Cocktails?> = ArrayList()
+        for (drinkNode in drinksNode) {
+            val name = drinkNode["strDrink"].asText()
+            val ingredientsBuilder = StringBuilder()
+            val recipes = drinkNode["strInstructions"].asText()
+            val category = drinkNode["strCategory"].asText()
+            val alcoholic = drinkNode["strAlcoholic"].asText()
+            val image_url = drinkNode["strDrinkThumb"].asText()
             // 재료와 측정값 결합
-            for (int i = 1; i <= 15; i++) {
-                JsonNode ingredientNode = drinkNode.get("strIngredient" + i);
-                JsonNode measureNode = drinkNode.get("strMeasure" + i);
-                if (ingredientNode == null || ingredientNode.isNull()) {
-                    break; // 재료가 없으면 중단
+            for (i in 1..15) {
+                val ingredientNode = drinkNode["strIngredient$i"]
+                val measureNode = drinkNode["strMeasure$i"]
+                if (ingredientNode == null || ingredientNode.isNull) {
+                    break // 재료가 없으면 중단
                 }
-                String ingredient = ingredientNode.asText();
-                String measure = measureNode != null && !measureNode.isNull() ? measureNode.asText() : "";
-                ingredientsBuilder.append(ingredient).append(" ").append(measure).append(", ");
+                val ingredient = ingredientNode.asText()
+                val measure =
+                    if (measureNode != null && !measureNode.isNull) measureNode.asText() else ""
+                ingredientsBuilder.append(ingredient).append(" ").append(measure).append(", ")
             }
 
             // 마지막 쉼표 제거
-            String ingredients = ingredientsBuilder.toString().replaceAll(", $", "");
+            val ingredients = ingredientsBuilder.toString().replace(", $".toRegex(), "")
 
             // ProcessedCocktail 객체 생성
-            cocktails.add(new Cocktails(name, ingredients, recipes, category, alcoholic, image_url, 0L, 0L));
+            cocktails.add(
+                Cocktails(
+                    name,
+                    ingredients,
+                    recipes,
+                    category,
+                    alcoholic,
+                    image_url,
+                    0L,
+                    0L
+                )
+            )
         }
-        return cocktailsMapper.convertToCocktailsTOList(cocktails);
+        return cocktailsMapper!!.convertToCocktailsTOList(cocktails)
     }
-
 }
