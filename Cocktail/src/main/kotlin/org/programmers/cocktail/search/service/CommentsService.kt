@@ -1,64 +1,60 @@
-package org.programmers.cocktail.search.service;
+package org.programmers.cocktail.search.service
 
-import java.util.Collections;
-import java.util.List;
-import org.programmers.cocktail.entity.Comments;
-import org.programmers.cocktail.repository.comments.CommentsRepository;
-import org.programmers.cocktail.search.dto.CommentsTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.programmers.cocktail.repository.comments.CommentsRepository
+import org.programmers.cocktail.search.dto.CommentsTO
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 @Service
-public class CommentsService {
-
-    static final int SUCCESS = 1;
-    static final int FAIL = 0;
+class CommentsService {
+    @Autowired
+    var commentsRepository: CommentsRepository? = null
 
     @Autowired
-    CommentsRepository commentsRepository;
+    var commentsMapper: CommentsMapper? = null
 
-    @Autowired
-    CommentsMapper commentsMapper;
+    fun findByCocktailId(cocktailId: Long?): List<CommentsTO> {
+        val commentsList = commentsRepository!!.findByCocktailId(cocktailId)
 
-    public List<CommentsTO> findByCocktailId(Long cocktailId){
-
-        List<Comments> commentsList = commentsRepository.findByCocktailId(cocktailId);
-
-        if(commentsList.isEmpty()){
-            return Collections.emptyList();
+        if (commentsList!!.isEmpty()) {
+            return emptyList()
         }
 
-        List<CommentsTO> commentsTOList = commentsMapper.convertToCommentsTOList(commentsList);
+        val commentsTOList = commentsMapper!!.convertToCommentsTOList(commentsList)
 
-        return commentsTOList;
+        return commentsTOList
     }
 
-    public int insertComments(CommentsTO commentsTO){
-
+    fun insertComments(commentsTO: CommentsTO?): Int {
         // TO->Entity 변환
-        Comments comments = commentsMapper.convertToComments(commentsTO);
+
+        val comments = commentsMapper!!.convertToComments(commentsTO)
         try {
-            commentsRepository.save(comments);
-        } catch (Exception e) {
-            System.out.println("[에러]"+e.getMessage());
-            return FAIL;
+            commentsRepository!!.save(comments)
+        } catch (e: Exception) {
+            println("[에러]" + e.message)
+            return FAIL
         }
 
-        return SUCCESS;
+        return SUCCESS
     }
 
-    public int deleteById(CommentsTO commentsTO){
+    fun deleteById(commentsTO: CommentsTO): Int {
+        val commentsId: Long = commentsTO.setId()
 
-        Long commentsId = commentsTO.getId();
+        val commentsDeleteResult =
+            commentsRepository!!.deleteByIdWithReturnAffectedRowCount(commentsId)
 
-        int commentsDeleteResult = commentsRepository.deleteByIdWithReturnAffectedRowCount(commentsId);
-
-        if(commentsDeleteResult == 0){
-            return FAIL;
+        if (commentsDeleteResult == 0) {
+            return FAIL
         }
 
-        return SUCCESS;
+        return SUCCESS
     }
 
 
+    companion object {
+        const val SUCCESS: Int = 1
+        const val FAIL: Int = 0
+    }
 }
