@@ -1,19 +1,15 @@
-package org.programmers.cocktail.search.dto;
+package org.programmers.cocktail.search.dto
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class UsersTO {
-    private Long id;
-    private String name;
-    private String email;
-    private String password;
+class UsersTO {
+    private val id: Long? = null
+    private val name: String? = null
+    private val email: String? = null
+    private val password: String? = null
 }
