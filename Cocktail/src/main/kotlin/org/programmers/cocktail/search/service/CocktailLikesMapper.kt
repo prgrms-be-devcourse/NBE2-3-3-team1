@@ -14,8 +14,8 @@ class CocktailLikesMapper @Autowired constructor(private val modelMapper: ModelM
         modelMapper.addMappings<CocktailLikes, CocktailLikesTO>(object :
             PropertyMap<CocktailLikes?, CocktailLikesTO?>() {
             override fun configure() {
-                map().setUserId(source.getUsers().getId())
-                map().setCocktailId(source.getCocktails().getId())
+                map(source?.users?.id, destination?.userId)
+                map(source?.cocktails?.id, destination?.cocktailId)
             }
         })
 
@@ -23,8 +23,8 @@ class CocktailLikesMapper @Autowired constructor(private val modelMapper: ModelM
         modelMapper.addMappings<CocktailLikesTO, CocktailLikes>(object :
             PropertyMap<CocktailLikesTO?, CocktailLikes?>() {
             override fun configure() {
-                map().getUsers().setId(source.getUserId())
-                map().getCocktails().setId(source.getCocktailId())
+                map(source?.userId, destination?.users?.id)
+                map(source?.cocktailId, destination?.cocktails?.id)
             }
         })
     }
