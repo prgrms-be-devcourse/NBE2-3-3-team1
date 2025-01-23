@@ -1,39 +1,46 @@
-package org.programmers.cocktail.search.service;
+package org.programmers.cocktail.search.service
 
-import java.util.List;
-import java.util.stream.Collectors;
-import org.modelmapper.ModelMapper;
-import org.programmers.cocktail.entity.Cocktails;
-import org.programmers.cocktail.search.dto.CocktailsTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.modelmapper.ModelMapper
+import org.programmers.cocktail.entity.Cocktails
+import org.programmers.cocktail.search.dto.CocktailsTO
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import java.util.stream.Collectors
 
 @Service
-public class CocktailsMapper {
-
+class CocktailsMapper {
     @Autowired
-    private ModelMapper modelMapper;
+    private val modelMapper: ModelMapper? = null
 
-    public List<CocktailsTO> convertToCocktailsTOList(List<Cocktails> cocktailsList) {
-        List<CocktailsTO> cocktailsTOList = cocktailsList.stream()
-            .map(cocktails -> modelMapper.map(cocktails, CocktailsTO.class))
-            .collect(Collectors.toList());
-        return cocktailsTOList;
+    fun convertToCocktailsTOList(cocktailsList: List<Cocktails?>): List<CocktailsTO> {
+        val cocktailsTOList = cocktailsList.stream()
+            .map { cocktails: Cocktails? ->
+                modelMapper!!.map(
+                    cocktails,
+                    CocktailsTO::class.java
+                )
+            }
+            .collect(Collectors.toList())
+        return cocktailsTOList
     }
 
-    public List<Cocktails> convertToCocktailsList(List<CocktailsTO> cocktailsTOList) {
-        List<Cocktails> cocktailsList = cocktailsTOList.stream()
-            .map(cocktailsTO -> modelMapper.map(cocktailsTO, Cocktails.class))
-            .collect(Collectors.toList());
-        return cocktailsList;
+    fun convertToCocktailsList(cocktailsTOList: List<CocktailsTO?>): List<Cocktails> {
+        val cocktailsList = cocktailsTOList.stream()
+            .map { cocktailsTO: CocktailsTO? ->
+                modelMapper!!.map(
+                    cocktailsTO,
+                    Cocktails::class.java
+                )
+            }
+            .collect(Collectors.toList())
+        return cocktailsList
     }
 
-    public Cocktails convertToCocktails(CocktailsTO cocktailsTO) {
-        return modelMapper.map(cocktailsTO, Cocktails.class);
+    fun convertToCocktails(cocktailsTO: CocktailsTO?): Cocktails {
+        return modelMapper!!.map(cocktailsTO, Cocktails::class.java)
     }
 
-    public CocktailsTO convertToCocktailsTO(Cocktails cocktails) {
-        return modelMapper.map(cocktails, CocktailsTO.class);
+    fun convertToCocktailsTO(cocktails: Cocktails?): CocktailsTO {
+        return modelMapper!!.map(cocktails, CocktailsTO::class.java)
     }
-
 }
