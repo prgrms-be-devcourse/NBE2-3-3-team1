@@ -1,120 +1,127 @@
-package org.programmers.cocktail.search.service;
+package org.programmers.cocktail.search.service
 
-import jakarta.transaction.Transactional;
-import java.util.Optional;
-import org.programmers.cocktail.entity.CocktailLikes;
-import org.programmers.cocktail.global.Utility.SearchUtils;
-import org.programmers.cocktail.repository.cocktail_likes.CocktailLikesRepository;
-import org.programmers.cocktail.search.dto.CocktailLikesTO;
-import org.programmers.cocktail.search.dto.CocktailsTO;
-import org.programmers.cocktail.search.enums.UpdateLikesInfoByUserActionType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional
+import org.programmers.cocktail.global.Utility.SearchUtils
+import org.programmers.cocktail.repository.cocktail_likes.CocktailLikesRepository
+import org.programmers.cocktail.search.dto.CocktailLikesTO
+import org.programmers.cocktail.search.dto.CocktailsTO
+import org.programmers.cocktail.search.enums.UpdateLikesInfoByUserActionType
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 @Service
-public class CocktailLikesService {
-
-    static final int SUCCESS = 1;
-    static final int FAIL = 0;
+class CocktailLikesService {
+    @Autowired
+    private val cocktailLikesRepository: CocktailLikesRepository? = null
 
     @Autowired
-    private CocktailLikesRepository cocktailLikesRepository;
+    private val cocktailLikesMapper: CocktailLikesMapper? = null
 
     @Autowired
-    private CocktailLikesMapper cocktailLikesMapper;
+    private val searchUtils: SearchUtils? = null
 
     @Autowired
-    private SearchUtils  searchUtils;
-
-    @Autowired
-    private CocktailsService cocktailsService;
+    private val cocktailsService: CocktailsService? = null
 
     @Transactional
-    public Long updateLikesInfoByUser(String sessionValue, String cocktailId, UpdateLikesInfoByUserActionType updateLikesInfoByUserActionType) {
+    fun updateLikesInfoByUser(
+        sessionValue: String?,
+        cocktailId: String,
+        updateLikesInfoByUserActionType: UpdateLikesInfoByUserActionType
+    ): Long? {
         // 1. cocktail_likes에서 user_id, cocktail_id 삭제
-        CocktailLikesTO cocktailLikesTO = new CocktailLikesTO();
-        cocktailLikesTO.setUserId(searchUtils.searchUserByUserEmail(sessionValue).getId());
-        cocktailLikesTO.setCocktailId(Long.parseLong(cocktailId));
+        val cocktailLikesTO = CocktailLikesTO()
+        cocktailLikesTO.setUserId(searchUtils!!.searchUserByUserEmail(sessionValue).getId())
+        cocktailLikesTO.setCocktailId(cocktailId.toLong())
 
         // SUCCESS: 1, FAIL: 0
-        if(updateLikesInfoByUserActionType == UpdateLikesInfoByUserActionType.ADD){
-            int cocktailLikesInsertResult = insertCocktailLikes(cocktailLikesTO);
+        if (updateLikesInfoByUserActionType == UpdateLikesInfoByUserActionType.ADD) {
+            val cocktailLikesInsertResult = insertCocktailLikes(cocktailLikesTO)
 
-            if(cocktailLikesInsertResult==0){
-                throw new RuntimeException("Failed to add a new like to the cocktail_likes table"); // DB추가 실패(500반환)
+            if (cocktailLikesInsertResult == 0) {
+                throw RuntimeException("Failed to add a new like to the cocktail_likes table") // DB추가 실패(500반환)
             }
-        }
-        else{
-            int cocktailLikesDeleteResult = deleteCocktailLikes(cocktailLikesTO);
+        } else {
+            val cocktailLikesDeleteResult = deleteCocktailLikes(cocktailLikesTO)
 
-            if(cocktailLikesDeleteResult==0){
-                throw new RuntimeException("Failed to delete a like in cocktail_likes table"); // DB삭제 실패(500반환)
+            if (cocktailLikesDeleteResult == 0) {
+                throw RuntimeException("Failed to delete a like in cocktail_likes table") // DB삭제 실패(500반환)
             }
         }
 
         // 2. cocktailId에 해당하는 cocktailsLikes 값 가져오기
-        Long cocktailLikesCountById = countCocktailLikesById(cocktailLikesTO);
+        val cocktailLikesCountById = countCocktailLikesById(cocktailLikesTO)
 
         // 3. cocktails테이블에 cocktailsLikes 값 업데이트
-        CocktailsTO cocktailsTO = new CocktailsTO();
-        cocktailsTO.setId(Long.parseLong(cocktailId));
-        cocktailsTO.setLikes(cocktailLikesCountById);
+        val cocktailsTO = CocktailsTO()
+        cocktailsTO.setId(cocktailId.toLong())
+        cocktailsTO.setLikes(cocktailLikesCountById)
 
-        int cocktailLikesCountUpdateResult = cocktailsService.updateCocktailLikesCount(cocktailsTO);
+        val cocktailLikesCountUpdateResult =
+            cocktailsService!!.updateCocktailLikesCount(cocktailsTO)
 
         // SUCCESS: 1, FAIL: 0
-        if(cocktailLikesCountUpdateResult==0){
-            throw new RuntimeException("Failed to update likes in cocktails table"); // 칵테일 좋아요 업데이트 실패(500반환)
+        if (cocktailLikesCountUpdateResult == 0) {
+            throw RuntimeException("Failed to update likes in cocktails table") // 칵테일 좋아요 업데이트 실패(500반환)
         }
 
-        return cocktailLikesCountById;
+        return cocktailLikesCountById
     }
 
 
-    public int findByUserIdAndCocktailId(Long userId, Long cocktailId){
+    fun findByUserIdAndCocktailId(userId: Long?, cocktailId: Long?): Int {
+        val cocktailLikesOptional =
+            cocktailLikesRepository!!.findByUserIdAndCocktailId(userId, cocktailId)
 
-        Optional<CocktailLikes> cocktailLikesOptional = cocktailLikesRepository.findByUserIdAndCocktailId(userId, cocktailId);
-
-        if(!cocktailLikesOptional.isPresent()){
-            return FAIL;
+        if (!cocktailLikesOptional!!.isPresent) {
+            return FAIL
         }
-        return SUCCESS;
+        return SUCCESS
     }
 
-    public int insertCocktailLikes(CocktailLikesTO cocktailLikesTO){
-
+    fun insertCocktailLikes(cocktailLikesTO: CocktailLikesTO?): Int {
         // TO->Entity 변환
-        CocktailLikes cocktailLikes = cocktailLikesMapper.convertToCocktailLikes(cocktailLikesTO);
+
+        val cocktailLikes = cocktailLikesMapper!!.convertToCocktailLikes(cocktailLikesTO)
         try {
-            cocktailLikesRepository.save(cocktailLikes);
-        } catch (Exception e) {
-            System.out.println("[에러]"+e.getMessage());
-            return FAIL;
+            cocktailLikesRepository!!.save(cocktailLikes)
+        } catch (e: Exception) {
+            println("[에러]" + e.message)
+            return FAIL
         }
 
-        return SUCCESS;
+        return SUCCESS
     }
 
-    public int deleteCocktailLikes(CocktailLikesTO cocktailLikesTO){
+    fun deleteCocktailLikes(cocktailLikesTO: CocktailLikesTO): Int {
+        val cocktailLikesDeleteResult = cocktailLikesRepository!!.deleteByUserIdAndCocktailId(
+            cocktailLikesTO.getUserId(),
+            cocktailLikesTO.getCocktailId()
+        )
 
-        int cocktailLikesDeleteResult = cocktailLikesRepository.deleteByUserIdAndCocktailId(cocktailLikesTO.getUserId(), cocktailLikesTO.getCocktailId());;
 
-        if(cocktailLikesDeleteResult==0){
+
+        if (cocktailLikesDeleteResult == 0) {
             // 삭제된 행이 없는 경우
-            return FAIL;
+            return FAIL
         }
 
-        return SUCCESS;
+        return SUCCESS
     }
 
-    public Long countCocktailLikesById(CocktailLikesTO cocktailLikesTO){
-
+    fun countCocktailLikesById(cocktailLikesTO: CocktailLikesTO): Long? {
         //todo 예외처리 -> 에러 발생시 어떻게 처리할지 체크
         // 1) cocktailLikesTO에 cocktailid가 null일때
         // 2)
-        Long cocktailLikesCountById = cocktailLikesRepository.countCocktailLikesById(cocktailLikesTO.getCocktailId());
 
-        return cocktailLikesCountById;
+        val cocktailLikesCountById =
+            cocktailLikesRepository!!.countCocktailLikesById(cocktailLikesTO.getCocktailId())
+
+        return cocktailLikesCountById
     }
 
+    companion object {
+        const val SUCCESS: Int = 1
+        const val FAIL: Int = 0
+    }
 }
