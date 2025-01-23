@@ -1,25 +1,22 @@
-package org.programmers.cocktail.search.service;
+package org.programmers.cocktail.search.service
 
-import org.programmers.cocktail.entity.Users;
-import org.programmers.cocktail.repository.users.UsersRepository;
-import org.programmers.cocktail.search.dto.UsersTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.programmers.cocktail.repository.users.UsersRepository
+import org.programmers.cocktail.search.dto.UsersTO
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 @Service
-public class UsersService {
+class UsersService {
     @Autowired
-    private UsersRepository usersRepository;
+    private val usersRepository: UsersRepository? = null
 
     @Autowired
-    private UsersMapper usersMapper;
+    private val usersMapper: UsersMapper? = null
 
-//    @Autowired
-//    private UsersRepositoryImpl usersRepositoryImpl;
-
-    public UsersTO findByEmail(String sessionEmail) {
-        Users userInfo =  usersRepository.findByEmail(sessionEmail).orElse(null);
-        return usersMapper.convertToUsersTO(userInfo);
+    //    @Autowired
+    //    private UsersRepositoryImpl usersRepositoryImpl;
+    fun findByEmail(sessionEmail: String): UsersTO {
+        val userInfo = usersRepository!!.findByEmail(sessionEmail)!!.orElse(null)
+        return usersMapper!!.convertToUsersTO(userInfo)
     }
-
 }
