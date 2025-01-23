@@ -1,0 +1,3 @@
+package org.programmers.cocktail.repository.cocktail_likes
+
+class CocktailLikesRepositoryImpl 
