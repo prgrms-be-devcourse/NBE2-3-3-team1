@@ -1,22 +1,21 @@
-package org.programmers.cocktail.search.service;
+package org.programmers.cocktail.search.service
 
-import org.modelmapper.ModelMapper;
-import org.programmers.cocktail.entity.Users;
-import org.programmers.cocktail.search.dto.UsersTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.modelmapper.ModelMapper
+import org.programmers.cocktail.entity.Users
+import org.programmers.cocktail.search.dto.UsersTO
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 @Service
-public class UsersMapper {
-
+class UsersMapper {
     @Autowired
-    private ModelMapper modelMapper;
+    private val modelMapper: ModelMapper? = null
 
     //entity->TO변환
-    public UsersTO convertToUsersTO(Users users) {
+    fun convertToUsersTO(users: Users?): UsersTO? {
         if (users == null) {
-            return null;
+            return null
         }
-        return modelMapper.map(users, UsersTO.class);
+        return modelMapper!!.map(users, UsersTO::class.java)
     }
 }
