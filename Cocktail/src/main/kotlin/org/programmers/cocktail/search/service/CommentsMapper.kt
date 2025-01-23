@@ -1,50 +1,49 @@
-package org.programmers.cocktail.search.service;
+package org.programmers.cocktail.search.service
 
-import java.util.List;
-import java.util.stream.Collectors;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
-import org.programmers.cocktail.entity.Comments;
-import org.programmers.cocktail.search.dto.CommentsTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.modelmapper.ModelMapper
+import org.modelmapper.PropertyMap
+import org.programmers.cocktail.entity.Comments
+import org.programmers.cocktail.search.dto.CommentsTO
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import java.util.stream.Collectors
 
 @Service
-public class CommentsMapper {
-    private ModelMapper modelMapper;
-
-    @Autowired
-    public CommentsMapper(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-
+class CommentsMapper @Autowired constructor(private val modelMapper: ModelMapper) {
+    init {
         // Comments -> CommentsTO 변환 매핑
-        modelMapper.addMappings(new PropertyMap<Comments, CommentsTO>() {
-            @Override
-            protected void configure() {
-                map().setUserId(source.getUsers().getId());
-                map().setCocktailId(source.getCocktails().getId());
-                map().setUserName(source.getUsers().getName());
+        modelMapper.addMappings<Comments, CommentsTO>(object :
+            PropertyMap<Comments?, CommentsTO?>() {
+            override fun configure() {
+                map().setUserId(source.getUsers().getId())
+                map().setCocktailId(source.getCocktails().getId())
+                map().setUserName(source.getUsers().getName())
             }
-        });
+        })
 
         // CommentsTO -> Comments 변환 매핑
-        modelMapper.addMappings(new PropertyMap<CommentsTO, Comments>() {
-            @Override
-            protected void configure() {
-                map().getUsers().setId(source.getUserId());
-                map().getCocktails().setId(source.getCocktailId());
+        modelMapper.addMappings<CommentsTO, Comments>(object :
+            PropertyMap<CommentsTO?, Comments?>() {
+            override fun configure() {
+                map().getUsers().setId(source.getUserId())
+                map().getCocktails().setId(source.getCocktailId())
             }
-        });
+        })
     }
 
-    public List<CommentsTO> convertToCommentsTOList(List<Comments> commentsList) {
-        List<CommentsTO> commentsTOList = commentsList.stream()
-            .map(comments -> modelMapper.map(comments, CommentsTO.class))
-            .collect(Collectors.toList());
-        return commentsTOList;
+    fun convertToCommentsTOList(commentsList: List<Comments?>): List<CommentsTO> {
+        val commentsTOList = commentsList.stream()
+            .map { comments: Comments? ->
+                modelMapper.map(
+                    comments,
+                    CommentsTO::class.java
+                )
+            }
+            .collect(Collectors.toList())
+        return commentsTOList
     }
 
-    public Comments convertToComments(CommentsTO commentsTO) {
-        return modelMapper.map(commentsTO, Comments.class);
+    fun convertToComments(commentsTO: CommentsTO?): Comments {
+        return modelMapper.map(commentsTO, Comments::class.java)
     }
 }
