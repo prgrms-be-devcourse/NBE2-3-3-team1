@@ -13,10 +13,8 @@ class UsersService {
     @Autowired
     private val usersMapper: UsersMapper? = null
 
-    //    @Autowired
-    //    private UsersRepositoryImpl usersRepositoryImpl;
-    fun findByEmail(sessionEmail: String): UsersTO {
-        val userInfo = usersRepository!!.findByEmail(sessionEmail)!!.orElse(null)
-        return usersMapper!!.convertToUsersTO(userInfo)
+    fun findByEmail(sessionEmail: String): UsersTO? {
+        val userInfo = usersRepository?.findByEmail(sessionEmail)?.orElse(null)
+        return userInfo?.let { usersMapper?.convertToUsersTO(it) } ?: throw RuntimeException("Failed to convert to UserTO")
     }
 }
