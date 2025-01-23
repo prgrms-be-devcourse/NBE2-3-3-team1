@@ -1,24 +1,19 @@
-package org.programmers.cocktail.search.dto;
+package org.programmers.cocktail.search.dto
 
-import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*
+import java.time.LocalDateTime
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class CommentsTO {
-    private Long id;
-    private String content;
-    private Long userId;
-    private String userName;
-    private Long cocktailId;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
+class CommentsTO {
+    private val id: Long? = null
+    private val content: String? = null
+    private val userId: Long? = null
+    private val userName: String? = null
+    private val cocktailId: Long? = null
+    private val createdAt: LocalDateTime? = null
+    private val updatedAt: LocalDateTime? = null
 }
