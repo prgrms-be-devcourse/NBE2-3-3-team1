@@ -37,7 +37,7 @@ class SearchController {
 
     @GetMapping("/cocktails/top/{criteria}")
     fun getTopHitsCocktails(@PathVariable criteria: String): ResponseEntity<List<CocktailsTO?>> {
-        var cocktailsDescTOList: List<CocktailsTO?> = Collections.EMPTY_LIST
+        var cocktailsDescTOList: List<CocktailsTO?> = Collections.EMPTY_LIST as List<CocktailsTO?>
 
         if (criteria == "likes") {
             cocktailsDescTOList =
