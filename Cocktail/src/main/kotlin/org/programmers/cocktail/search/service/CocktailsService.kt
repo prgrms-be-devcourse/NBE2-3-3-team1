@@ -18,12 +18,12 @@ class CocktailsService {
     fun findAllByOrderDesc(findAllByOrderDescActionType: FindAllByOrderDescActionType): List<CocktailsTO> {
         val cocktailsDescList =
             if (findAllByOrderDescActionType == FindAllByOrderDescActionType.ORDER_BY_LIKES) {
-                cocktailsRepository!!.findAllByOrderByLikesDesc()
+                cocktailsRepository?.findAllByOrderByLikesDesc()
             } else {
-                cocktailsRepository!!.findAllByOrderByHitsDesc()
-            }
+                cocktailsRepository?.findAllByOrderByHitsDesc()
+            } ?: throw RuntimeException("Failed to get Sorted Cocktail list from Database ")
 
-        return cocktailsMapper!!.convertToCocktailsTOList(cocktailsDescList)
+        return cocktailsMapper?.convertToCocktailsTOList(cocktailsDescList) ?: throw RuntimeException("UserService has no response")
     }
 
     fun findByNameContaining(keyword: String?): List<CocktailsTO> {
