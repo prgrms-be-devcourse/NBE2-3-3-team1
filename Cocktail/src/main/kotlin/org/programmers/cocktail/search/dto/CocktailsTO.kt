@@ -1,25 +1,20 @@
-package org.programmers.cocktail.search.dto;
+package org.programmers.cocktail.search.dto
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class CocktailsTO {
-    private Long id;
-    private String name;
-    private String ingredients;
-    private String recipes;
-    private String category;
-    private String alcoholic;
-    private String image_url;
-    private Long hits;
-    private Long likes;
-
+class CocktailsTO {
+    private val id: Long? = null
+    private val name: String? = null
+    private val ingredients: String? = null
+    private val recipes: String? = null
+    private val category: String? = null
+    private val alcoholic: String? = null
+    private val image_url: String? = null
+    private val hits: Long? = null
+    private val likes: Long? = null
 }
