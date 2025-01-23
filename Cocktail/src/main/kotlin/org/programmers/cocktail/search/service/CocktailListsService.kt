@@ -1,58 +1,59 @@
-package org.programmers.cocktail.search.service;
+package org.programmers.cocktail.search.service
 
-import java.util.Optional;
-import org.programmers.cocktail.entity.CocktailLists;
-import org.programmers.cocktail.repository.cocktail_lists.CocktailListsRepository;
-import org.programmers.cocktail.search.dto.CocktailListsTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.programmers.cocktail.repository.cocktail_lists.CocktailListsRepository
+import org.programmers.cocktail.search.dto.CocktailListsTO
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 
 @Service
-public class CocktailListsService {
-
-    static final int SUCCESS = 1;
-    static final int FAIL = 0;
-
+class CocktailListsService {
     @Autowired
-    private CocktailListsRepository cocktailListsRepository;
+    private val cocktailListsRepository: CocktailListsRepository? = null
 
 
     @Autowired
-    private CocktailListsMapper cocktailListsMapper;
+    private val cocktailListsMapper: CocktailListsMapper? = null
 
-    public int findByUserIdAndCocktailId(Long userId, Long cocktailId){
+    fun findByUserIdAndCocktailId(userId: Long?, cocktailId: Long?): Int {
+        val cocktailListsOptional =
+            cocktailListsRepository!!.findByUserIdAndCocktailId(userId, cocktailId)
 
-        Optional<CocktailLists> cocktailListsOptional = cocktailListsRepository.findByUserIdAndCocktailId(userId, cocktailId);
-
-        if(!cocktailListsOptional.isPresent()){
-            return FAIL;
+        if (!cocktailListsOptional!!.isPresent) {
+            return FAIL
         }
-        return SUCCESS;
+        return SUCCESS
     }
 
-    public int insertCocktailList(CocktailListsTO cocktailListsTO){
-
+    fun insertCocktailList(cocktailListsTO: CocktailListsTO?): Int {
         // TO->Entity 변환
-        CocktailLists cocktailLists = cocktailListsMapper.convertToCocktailLists(cocktailListsTO);
+
+        val cocktailLists = cocktailListsMapper!!.convertToCocktailLists(cocktailListsTO)
         try {
-            cocktailListsRepository.save(cocktailLists);
-        } catch (Exception e) {
-            System.out.println("[에러]"+e.getMessage());
-            return FAIL;
+            cocktailListsRepository!!.save(cocktailLists)
+        } catch (e: Exception) {
+            println("[에러]" + e.message)
+            return FAIL
         }
 
-        return SUCCESS;
+        return SUCCESS
     }
 
-    public int deleteCocktailList(CocktailListsTO cocktailListsTO){
+    fun deleteCocktailList(cocktailListsTO: CocktailListsTO): Int {
+        val cocktailListDeleteResult = cocktailListsRepository!!.deleteByUserIdAndCocktailId(
+            cocktailListsTO.getUserId(),
+            cocktailListsTO.getCocktailId()
+        )
 
-        int cocktailListDeleteResult = cocktailListsRepository.deleteByUserIdAndCocktailId(cocktailListsTO.getUserId(), cocktailListsTO.getCocktailId());
-
-        if(cocktailListDeleteResult==0){
+        if (cocktailListDeleteResult == 0) {
             // 삭제된 행이 없는 경우
-            return FAIL;
+            return FAIL
         }
 
-        return SUCCESS;
+        return SUCCESS
+    }
+
+    companion object {
+        const val SUCCESS: Int = 1
+        const val FAIL: Int = 0
     }
 }
