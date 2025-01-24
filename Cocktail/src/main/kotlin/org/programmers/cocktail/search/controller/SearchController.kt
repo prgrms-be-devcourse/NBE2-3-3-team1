@@ -92,8 +92,8 @@ class SearchController {
         // cocktail_lists에 user_id, cocktail_id 저장
 
         val cocktailListsTO = CocktailListsTO()
-        cocktailListsTO.setUserId(searchUtils!!.searchUserByUserEmail(sessionValue).getId())
-        cocktailListsTO.setCocktailId(cocktailId.toLong())
+        cocktailListsTO.userId = searchUtils!!.searchUserByUserEmail(sessionValue).id
+        cocktailListsTO.cocktailId = cocktailId.toLong()
 
         // SUCCESS: 1, FAIL: 0
         val cocktailListInsertResult = cocktailListsService!!.insertCocktailList(cocktailListsTO)
