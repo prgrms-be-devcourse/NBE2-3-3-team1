@@ -117,7 +117,7 @@ class SearchHtmlController {
         // 특정 칵테일 상세페이지 조회시 해당 칵테일 hit 증가
 
         val cocktailsTO = CocktailsTO()
-        cocktailsTO.setId((cocktailId).toLong())
+        cocktailsTO.id = cocktailId.toLong()
 
         // SUCCESS: 1, FAIL: 0
         val cocktailHitsUpdateResult = cocktailsService!!.updateCocktailHits(cocktailsTO)
