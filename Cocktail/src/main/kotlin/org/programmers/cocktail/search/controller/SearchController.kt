@@ -71,7 +71,7 @@ class SearchController {
 
         //userid, cocktailid가 cocktail_lists에 존재하는지 확인( SUCCESS: 1, FAIL: 0 )
         val isCocktailListsPresent = cocktailListsService!!.findByUserIdAndCocktailId(
-            searchUtils!!.searchUserByUserEmail(sessionValue).getId(), cocktailId.toLong()
+            searchUtils!!.searchUserByUserEmail(sessionValue).id, cocktailId.toLong()
         )
 
         if (isCocktailListsPresent == 0) {
