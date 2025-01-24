@@ -58,7 +58,7 @@ class CocktailLikesService {
         cocktailsTO.likes = cocktailLikesCountById
 
         val cocktailLikesCountUpdateResult =
-            cocktailsService!!.updateCocktailLikesCount(cocktailsTO)
+            cocktailsService?.updateCocktailLikesCount(cocktailsTO) ?: throw RuntimeException("Failed to update Cocktail Likes Count(cocktailService is null)")
 
         // SUCCESS: 1, FAIL: 0
         if (cocktailLikesCountUpdateResult == 0) {

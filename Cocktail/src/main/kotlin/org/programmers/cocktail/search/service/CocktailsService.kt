@@ -75,8 +75,7 @@ class CocktailsService {
     }
 
     fun updateCocktailLikesCount(cocktailsTO: CocktailsTO): Int {
-        val cocktails = cocktailsRepository!!.findById(cocktailsTO.getId()).orElse(null)
-            ?: return FAIL
+        val cocktails = cocktailsRepository?.findById(cocktailsTO?.id ?: return FAIL)?.orElse(null) ?: return FAIL
 
         cocktails.setLikes(cocktailsTO.getLikes())
 
