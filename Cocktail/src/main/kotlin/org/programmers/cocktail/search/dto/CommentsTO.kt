@@ -1,6 +1,5 @@
 package org.programmers.cocktail.search.dto
 
-import lombok.*
 import java.time.LocalDateTime
 
 data class CommentsTO (

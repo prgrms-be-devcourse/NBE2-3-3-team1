@@ -1,7 +1,5 @@
 package org.programmers.cocktail.search.dto
 
-import lombok.*
-
 data class UsersTO (
     val id: Long? = null,
     val name: String? = null,

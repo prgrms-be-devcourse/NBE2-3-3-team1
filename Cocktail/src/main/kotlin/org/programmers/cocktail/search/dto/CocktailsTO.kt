@@ -1,7 +1,5 @@
 package org.programmers.cocktail.search.dto
 
-import lombok.*
-
 data class CocktailsTO(
     var id: Long ? = null,
     var name: String ? = null,
