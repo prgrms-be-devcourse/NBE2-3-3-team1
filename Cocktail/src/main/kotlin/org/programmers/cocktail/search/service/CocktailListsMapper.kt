@@ -14,8 +14,8 @@ class CocktailListsMapper @Autowired constructor(private val modelMapper: ModelM
         modelMapper.addMappings<CocktailLists, CocktailListsTO>(object :
             PropertyMap<CocktailLists?, CocktailListsTO?>() {
             override fun configure() {
-                map().setUserId(source.getUsers().getId())
-                map().setCocktailId(source.getCocktails().getId())
+                map(source?.users?.id, destination?.userId)
+                map(source?.cocktails?.id, destination?.cocktailId)
             }
         })
 
@@ -23,8 +23,8 @@ class CocktailListsMapper @Autowired constructor(private val modelMapper: ModelM
         modelMapper.addMappings<CocktailListsTO, CocktailLists>(object :
             PropertyMap<CocktailListsTO?, CocktailLists?>() {
             override fun configure() {
-                map().getUsers().setId(source.getUserId())
-                map().getCocktails().setId(source.getCocktailId())
+                map(source?.userId, destination?.users?.id)
+                map(source?.cocktailId, destination?.cocktails?.id)
             }
         })
     }
