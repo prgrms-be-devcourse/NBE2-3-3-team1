@@ -40,8 +40,8 @@ class CocktailListsService {
 
     fun deleteCocktailList(cocktailListsTO: CocktailListsTO): Int {
         val cocktailListDeleteResult = cocktailListsRepository!!.deleteByUserIdAndCocktailId(
-            cocktailListsTO.getUserId(),
-            cocktailListsTO.getCocktailId()
+            cocktailListsTO.userId,
+            cocktailListsTO.cocktailId
         )
 
         if (cocktailListDeleteResult == 0) {
