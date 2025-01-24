@@ -226,7 +226,7 @@ class SearchController {
         ) sessionValue: String?, @PathVariable reviewId: String
     ): ResponseEntity<Void> {
         val commentsTO = CommentsTO()
-        commentsTO.setId(reviewId.toLong())
+        commentsTO.id = reviewId.toLong()
 
         val commentsDeleteResult = commentsService!!.deleteById(commentsTO)
 
