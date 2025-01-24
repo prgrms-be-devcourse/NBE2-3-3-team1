@@ -87,11 +87,12 @@ class SearchHtmlController {
     }
 
 
-    @get:RequestMapping("/recommend")
-    val recommendCocktailPage: String
+    @RequestMapping("/recommend")
+    fun getRecommendCocktailPage(): String {
         // 추천칵테일 페이지 반환
-        get() =// 추천 칵테일페이지로 이동
-            "user/suggestion"
+        return "user/suggestion"
+    }
+
 
     // 메인페이지 반환
     @RequestMapping("/")
