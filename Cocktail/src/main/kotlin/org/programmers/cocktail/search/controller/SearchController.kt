@@ -203,9 +203,9 @@ class SearchController {
         @RequestBody commentsTOFromClient: CommentsTO
     ): ResponseEntity<Void> {
         val commentsTO = CommentsTO()
-        commentsTO.setContent(commentsTOFromClient.getContent())
-        commentsTO.setUserId(searchUtils!!.searchUserByUserEmail(sessionValue).getId())
-        commentsTO.setCocktailId(cocktailId.toLong())
+        commentsTO.content = commentsTOFromClient.content
+        commentsTO.userId = searchUtils!!.searchUserByUserEmail(sessionValue).id
+        commentsTO.cocktailId = cocktailId.toLong()
 
         // SUCCESS: 1, FAIL: 0
         val commentsInsertResult = commentsService!!.insertComments(commentsTO)
