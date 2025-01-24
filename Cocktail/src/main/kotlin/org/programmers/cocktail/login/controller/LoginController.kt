@@ -256,8 +256,6 @@ class LoginController {
                 // 모델에 유저 정보를 담아서 뷰로 전달
                 model.addAttribute("to", to)
 
-                // user, cocktails, cocktaillists 조인해서 user_id타고
-                // cocktaillists에 저장된 cocktail_id를 타서 cocktails에 가서 칵테일 정보 가져오기
                 val ct: MutableList<CocktailsDto> = ArrayList<CocktailsDto>()
 
                 for ( cl in cocktailLists ) {
