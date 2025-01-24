@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>만개의 칵테일</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #333;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: #333;
+      margin: 0 10px;
+      font-weight: bold;
+    }
+
+    .header {
+      background-color: transparent;
+      color: #000000;
+      text-align: center;
+      padding: 20px 0;
+      font-size: 34px;
+      font-weight: bold;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      flex-direction: column; /* 세로로 요소들이 쌓이게 설정 */
+      align-items: center; /* 가로로 중앙 정렬 */
+      margin: 40px 20px;
+      background-color: #fcd62c;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .left-section {
+      flex: 1;
+      text-align: center;
+      padding-right: 20px;
+    }
+
+    .right-section {
+      flex: 2;
+      padding-left: 20px;
+    }
+
+    .cocktail-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .cocktail-name {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .cocktail-ingredients, .cocktail-recipes, .cocktail-category, .cocktail-alcohol {
+      margin-bottom: 15px;
+    }
+
+    /*.cocktail-description {*/
+    /*  font-size: 16px;*/
+    /*  margin-bottom: 20px;*/
+    /*}*/
+  </style>
+</head>
+<body>
+
+<script>
+  function checkLogin() {
+    $.ajax({
+      url: '/login_complete',
+      type: 'POST',
+      success: function(response) {
+        if (response.flag === 0) {
+
+          console.log('마이 페이지로 이동');
+          window.location.href = '/mypage';
+
+
+        } else {
+          alert(response.message);
+          window.location.href = '/login';
+        }
+      },
+      error: function(xhr, status, error) {
+        alert('로그인 상태 확인 실패: ' + error);
+        window.location.href = '/login';
+      }
+    });
+  }
+
+  function checkLogin2() {
+    $.ajax({
+      url: '/login_complete',
+      type: 'POST',
+      success: function(response) {
+        if (response.flag === 0) {
+          alert('로그인되어 있습니다. 마이 페이지로 이동하세요');
+        } else {
+          alert(response.message);
+          window.location.href = '/login';
+        }
+      },
+      error: function(xhr, status, error) {
+        alert('로그인 상태 확인 실패: ' + error);
+        window.location.href = '/login';
+      }
+    });
+  }
+
+</script>
+
+<!-- 네비게이션 바 -->
+<div class="navbar">
+  <a th:href="@{/}">만 개의 칵테일</a>
+  <div>
+    <a href="/popular">인기 칵테일</a>
+    <a href="/recommend">추천 칵테일</a>
+    <a href="/search">칵테일 검색</a>
+    <a href="#" onclick="checkLogin()" class="mypage-link">MyPage</a>
+    <a href="#" class="login-link" onclick="checkLogin2()">로그인</a>
+  </div>
+</div>
+
+<!-- 오늘의 칵테일 섹션 -->
+<div class="container">
+  <div class="header">오늘의 칵테일</div>
+  <div class="content">
+    <!-- 왼쪽 칵테일 이미지 -->
+    <div class="left-section">
+      <img th:src="${cocktailSearchList[0].image_url}" alt="칵테일 이미지" class="cocktail-image" id="cocktailImage">
+    </div>
+
+    <!-- 오른쪽 칵테일 상세 정보 -->
+    <div class="right-section">
+      <div class="cocktail-name" id="cocktailName" th:text="${cocktailSearchList[0].name}"></div>
+
+      <div class="cocktail-ingredients">
+        <strong>재료:</strong>
+        <p id="cocktailIngredients" th:text="${cocktailSearchList[0].ingredients}"></p>
+      </div>
+
+      <div class="cocktail-recipes">
+        <strong>제조법:</strong>
+        <p id="cocktailRecipes" th:text="${cocktailSearchList[0].recipes}"></p>
+      </div>
+
+      <div class="cocktail-category">
+        <strong>카테고리:</strong>
+        <p id="cocktailCategory" th:text="${cocktailSearchList[0].category}"></p>
+      </div>
+
+      <div class="cocktail-alcohol">
+        <strong>알콜 여부:</strong>
+        <p id="cocktailAlcohol" th:text="${cocktailSearchList[0].alcoholic}"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
