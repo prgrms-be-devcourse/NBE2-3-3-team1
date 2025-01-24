@@ -31,8 +31,8 @@ class CocktailLikesService {
     ): Long? {
         // 1. cocktail_likes에서 user_id, cocktail_id 삭제
         val cocktailLikesTO = CocktailLikesTO()
-        cocktailLikesTO.setUserId(searchUtils!!.searchUserByUserEmail(sessionValue).getId())
-        cocktailLikesTO.setCocktailId(cocktailId.toLong())
+        cocktailLikesTO.userId = searchUtils!!.searchUserByUserEmail(sessionValue).id
+        cocktailLikesTO.cocktailId = cocktailId.toLong()
 
         // SUCCESS: 1, FAIL: 0
         if (updateLikesInfoByUserActionType == UpdateLikesInfoByUserActionType.ADD) {
@@ -50,12 +50,12 @@ class CocktailLikesService {
         }
 
         // 2. cocktailId에 해당하는 cocktailsLikes 값 가져오기
-        val cocktailLikesCountById = countCocktailLikesById(cocktailLikesTO)
+        val cocktailLikesCountById = countCocktailLikesById(cocktailLikesTO) ?: throw RuntimeException("Failed to get cocktailLikesById")
 
         // 3. cocktails테이블에 cocktailsLikes 값 업데이트
         val cocktailsTO = CocktailsTO()
-        cocktailsTO.setId(cocktailId.toLong())
-        cocktailsTO.setLikes(cocktailLikesCountById)
+        cocktailsTO.id = cocktailId.toLong()
+        cocktailsTO.likes = cocktailLikesCountById
 
         val cocktailLikesCountUpdateResult =
             cocktailsService!!.updateCocktailLikesCount(cocktailsTO)
@@ -95,8 +95,8 @@ class CocktailLikesService {
 
     fun deleteCocktailLikes(cocktailLikesTO: CocktailLikesTO): Int {
         val cocktailLikesDeleteResult = cocktailLikesRepository!!.deleteByUserIdAndCocktailId(
-            cocktailLikesTO.getUserId(),
-            cocktailLikesTO.getCocktailId()
+            cocktailLikesTO.userId,
+            cocktailLikesTO.cocktailId
         )
 
 
@@ -115,7 +115,7 @@ class CocktailLikesService {
         // 2)
 
         val cocktailLikesCountById =
-            cocktailLikesRepository!!.countCocktailLikesById(cocktailLikesTO.getCocktailId())
+            cocktailLikesRepository!!.countCocktailLikesById(cocktailLikesTO.cocktailId)
 
         return cocktailLikesCountById
     }
