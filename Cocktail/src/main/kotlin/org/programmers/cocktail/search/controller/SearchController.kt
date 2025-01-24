@@ -140,7 +140,7 @@ class SearchController {
 
         // userid, cocktailid가 cocktail_likes에 존재하는지 확인(SUCCESS: 1, FAIL: 0)
         val isCocktailLikesPresent = cocktailLikesService!!.findByUserIdAndCocktailId(
-            searchUtils!!.searchUserByUserEmail(sessionValue).getId(), cocktailId.toLong()
+            searchUtils!!.searchUserByUserEmail(sessionValue).id, cocktailId.toLong()
         )
 
         if (isCocktailLikesPresent == 0) {
