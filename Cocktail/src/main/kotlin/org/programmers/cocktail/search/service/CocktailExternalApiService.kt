@@ -16,7 +16,7 @@ class CocktailExternalApiService {
     private val cocktailsMapper: CocktailsMapper? = null
 
     // 1. Cocktail 검색용
-    fun fetchCocktailData(cocktailName: String): List<CocktailsTO> {
+    fun fetchCocktailData(cocktailName: String): List<CocktailsTO?> {
         // TheCocktailDB 호출 url - "Search cocktail by name" method
 
         val url =
@@ -26,7 +26,7 @@ class CocktailExternalApiService {
     }
 
     // 2. 메인 페이지 출력용
-    fun fetchCocktailData(): List<CocktailsTO> {
+    fun fetchCocktailData(): List<CocktailsTO?> {
         // TheCocktailDB 호출 url - "Lookup a random cocktail" method
 
         val url = "https://www.thecocktaildb.com/api/json/v1/1/random.php"
@@ -34,7 +34,7 @@ class CocktailExternalApiService {
         return parseJsonToCocktailsTOList(url)
     }
 
-    fun parseJsonToCocktailsTOList(url: String): List<CocktailsTO> {
+    fun parseJsonToCocktailsTOList(url: String): List<CocktailsTO?> {
         val response = restTemplate!!.getForEntity(
             url,
             JsonNode::class.java
@@ -44,11 +44,11 @@ class CocktailExternalApiService {
         val drinksNode = response.body!!["drinks"]
         if (drinksNode == null || drinksNode.isEmpty) {
             // 외부 API에 검색결과 없는 경우 빈 리스트 반환
-            return emptyList()
+            return emptyList<CocktailsTO?>().toMutableList()
         }
 
         // 검색된 모든 칵테일 처리
-        val cocktails: MutableList<Cocktails?> = ArrayList()
+        var cocktails: MutableList<CocktailsTO?> = ArrayList()
         for (drinkNode in drinksNode) {
             val name = drinkNode["strDrink"].asText()
             val ingredientsBuilder = StringBuilder()
@@ -73,19 +73,13 @@ class CocktailExternalApiService {
             val ingredients = ingredientsBuilder.toString().replace(", $".toRegex(), "")
 
             // ProcessedCocktail 객체 생성
+            val cocktailsTO : CocktailsTO = CocktailsTO(name=name, ingredients=ingredients, recipes = recipes,
+                category=category, alcoholic = alcoholic, image_url = image_url)
+
             cocktails.add(
-                Cocktails(
-                    name,
-                    ingredients,
-                    recipes,
-                    category,
-                    alcoholic,
-                    image_url,
-                    0L,
-                    0L
-                )
+                cocktailsTO
             )
         }
-        return cocktailsMapper!!.convertToCocktailsTOList(cocktails)
+        return cocktails
     }
 }
