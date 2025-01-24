@@ -7,27 +7,31 @@ import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 
 @Entity(name = "authorities")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@Getter
-class Authorities {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private val id: Long? = null
-
+@Table(name = "authorities")
+class Authorities(
     @Column(nullable = false, length = 50)
-    private var role: String? = null
+    var role: String, // null 불허
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @ToString.Exclude
-    private val users: Users? = null
+    val users: Users // null 불허
+) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null
 
     @CreationTimestamp
     @Column(updatable = false)
-    private var createdAt: LocalDateTime? = null
+    var createdAt: LocalDateTime? = null
+        protected set
 
     @UpdateTimestamp
-    private val updatedAt: LocalDateTime? = null
+    var updatedAt: LocalDateTime? = null
+        protected set
+
+    // JPA 기본 생성자
+    constructor() : this(
+        role = "",
+        users = Users() // 기본 사용자 객체 (혹은 null 가능성 관리 필요)
+    )
 }
