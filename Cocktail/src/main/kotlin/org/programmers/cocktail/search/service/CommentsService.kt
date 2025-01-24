@@ -39,8 +39,8 @@ class CommentsService {
         return SUCCESS
     }
 
-    fun deleteById(commentsTO: CommentsTO): Int {
-        val commentsId: Long = commentsTO.setId()
+    fun deleteById(commentsTO: CommentsTO?): Int {
+        val commentsId: Long = commentsTO?.id ?: return FAIL
 
         val commentsDeleteResult =
             commentsRepository!!.deleteByIdWithReturnAffectedRowCount(commentsId)
