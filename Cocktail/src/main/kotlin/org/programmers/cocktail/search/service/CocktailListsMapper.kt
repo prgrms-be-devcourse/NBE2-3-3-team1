@@ -5,7 +5,7 @@ import org.programmers.cocktail.search.dto.CocktailListsTO
 import org.springframework.stereotype.Service
 
 @Service
-object CocktailListsMapper1 {
+object CocktailListsMapper {
 
     // CocktailLists -> CocktailListsTO 변환 매핑
     fun convertToCocktailsListsTO(cocktailLists: CocktailLists?): CocktailListsTO {
