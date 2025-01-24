@@ -60,14 +60,14 @@ class CocktailsService {
         // Pessimistic Lock 적용
 
         val cocktailsOptional =
-            cocktailsRepository!!.findByIdWithPessimisticLock(cocktailsTO.getId())
+            cocktailsRepository!!.findByIdWithPessimisticLock(cocktailsTO.id)
 
         if (!cocktailsOptional!!.isPresent) {
             return FAIL // 칵테일 불러오기 실패
         }
 
         val cocktails = cocktailsOptional.get()
-        cocktails.setHits(cocktails.getHits() + 1)
+        cocktails.hits += 1
 
         cocktailsRepository.flush()
 
