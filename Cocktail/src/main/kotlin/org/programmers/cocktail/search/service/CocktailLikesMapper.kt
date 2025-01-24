@@ -3,6 +3,9 @@ package org.programmers.cocktail.search.service
 import org.modelmapper.ModelMapper
 import org.modelmapper.PropertyMap
 import org.programmers.cocktail.entity.CocktailLikes
+import org.programmers.cocktail.entity.Cocktails
+import org.programmers.cocktail.entity.QUsers.users
+import org.programmers.cocktail.entity.Users
 import org.programmers.cocktail.search.dto.CocktailLikesTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -25,6 +28,7 @@ class CocktailLikesMapper @Autowired constructor(private val modelMapper: ModelM
             override fun configure() {
                 map(source?.userId, destination?.users?.id)
                 map(source?.cocktailId, destination?.cocktails?.id)
+
             }
         })
     }
