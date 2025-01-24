@@ -15,9 +15,9 @@ class CommentsMapper @Autowired constructor(private val modelMapper: ModelMapper
         modelMapper.addMappings<Comments, CommentsTO>(object :
             PropertyMap<Comments?, CommentsTO?>() {
             override fun configure() {
-                map().setUserId(source.getUsers().getId())
-                map().setCocktailId(source.getCocktails().getId())
-                map().setUserName(source.getUsers().getName())
+                map(source?.users?.id, destination?.userId)
+                map(source?.cocktails?.id, destination?.cocktailId)
+                map(source?.users?.name, destination?.userName)
             }
         })
 
@@ -25,8 +25,8 @@ class CommentsMapper @Autowired constructor(private val modelMapper: ModelMapper
         modelMapper.addMappings<CommentsTO, Comments>(object :
             PropertyMap<CommentsTO?, Comments?>() {
             override fun configure() {
-                map().getUsers().setId(source.getUserId())
-                map().getCocktails().setId(source.getCocktailId())
+                map(source?.userId, destination?.users?.id)
+                map(source?.cocktailId, destination?.cocktails?.id)
             }
         })
     }
