@@ -13,7 +13,8 @@ class AppConfig {
     }
 
     @Bean
-    fun modelMapper(): ModelMapper {
-        return ModelMapper()
+    fun modelMapper() = ModelMapper().apply{
+        configuration.isFieldMatchingEnabled = true
+        configuration.fieldAccessLevel = org.modelmapper.config.Configuration.AccessLevel.PRIVATE
     }
 }

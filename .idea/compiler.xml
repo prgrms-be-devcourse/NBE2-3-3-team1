@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="Cocktail" target="17" />
+      <module name="Cocktail.main" target="17" />
+      <module name="Cocktail.test" target="17" />
+    </bytecodeTargetLevel>
     <annotationProcessing>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
