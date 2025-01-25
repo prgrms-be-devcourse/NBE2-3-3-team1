@@ -16,7 +16,7 @@ interface UsersRepository : JpaRepository<Users?, Long?>, UsersRepositoryCustom 
     @NonNull
     override fun findById(id: Long): Optional<Users?>
 
-    fun findAllByAuthorities_Role(role: String?, pageable: Pageable?): Page<Users?>?
+    fun findAllByAuthorities_Role(role: String?, pageable: Pageable?): Page<Users?>
 
     // override fun deleteById(id: Long): Boolean
 

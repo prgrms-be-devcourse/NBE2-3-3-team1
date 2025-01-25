@@ -3,7 +3,7 @@ package org.programmers.cocktail.global.exception
 import lombok.Getter
 import lombok.RequiredArgsConstructor
 
-@RequiredArgsConstructor
-@Getter
-class CustomRuntimeException(message: String?, cause: Throwable?) :
-    RuntimeException(message, cause)
+class CustomRuntimeException(
+    message: String? = null,
+    cause: Throwable? = null
+) : RuntimeException(message, cause)

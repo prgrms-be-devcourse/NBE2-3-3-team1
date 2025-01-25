@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query
 import java.util.*
 
 interface CocktailsRepository : JpaRepository<Cocktails?, Long?>, CocktailsRepositoryCustom {
-    fun findAllByOrderByLikesDesc(): List<Cocktails?>?
+    fun findAllByOrderByLikesDesc(): List<Cocktails?>
     fun findAllByOrderByHitsDesc(): List<Cocktails?>?
 
     @Query("SELECT c FROM cocktails c WHERE c.name LIKE %:userInput% OR c.ingredients LIKE %:userInput%")
