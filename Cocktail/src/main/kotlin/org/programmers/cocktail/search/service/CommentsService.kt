@@ -22,13 +22,16 @@ class CommentsService {
 
         val commentsTOList = commentsMapper!!.convertToCommentsTOList(commentsList)
 
+        println("commentsToList: " + commentsTOList)
         return commentsTOList
     }
 
     fun insertComments(commentsTO: CommentsTO?): Int {
         // TO->Entity 변환
-
         val comments = commentsMapper!!.convertToComments(commentsTO)
+        println("comments content : " + comments.content)
+        println("comments cocktailid : " + comments.cocktails.id)
+        println("comments userid : " + comments.users.id)
         try {
             commentsRepository!!.save(comments)
         } catch (e: Exception) {

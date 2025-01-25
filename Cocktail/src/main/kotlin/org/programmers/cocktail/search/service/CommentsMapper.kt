@@ -10,9 +10,13 @@ object CommentsMapper {
     // Comments -> CommentsTO 변환
     fun convertToCommentsTO(comments: Comments?): CommentsTO {
         return CommentsTO(
+            id = comments?.id,
             userId = comments?.users?.id,        // users 객체에서 id를 가져와서 userId로 설정
             cocktailId = comments?.cocktails?.id, // cocktails 객체에서 id를 가져와서 cocktailId로 설정
-            userName = comments?.users?.name     // users 객체에서 name을 가져와서 userName으로 설정
+            content = comments?.content ?: throw RuntimeException("[Mapping Failure] content is null"),
+            userName = comments.users.name,
+            createdAt = comments.createdAt,
+            updatedAt = comments.updatedAt
         )
     }
 
@@ -23,6 +27,7 @@ object CommentsMapper {
         // userId와 cocktailId로 users, cocktails 객체를 설정
         comments.users.id = commentsTO?.userId
         comments.cocktails.id = commentsTO?.cocktailId
+        comments.content = commentsTO?.content ?: throw RuntimeException("[Mapping Failure] content is null")
 
         return comments
     }
