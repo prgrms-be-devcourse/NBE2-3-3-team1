@@ -1,7 +1,6 @@
 package org.programmers.cocktail.entity
 
 import jakarta.persistence.*
-import lombok.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
@@ -11,30 +10,29 @@ import java.time.LocalDateTime
     name = "cocktail_lists",
     uniqueConstraints = [UniqueConstraint(columnNames = ["user_id", "cocktail_id"])]
 )
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-class CocktailLists {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private val id: Long? = null
-
+class CocktailLists(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @ToString.Exclude
-    private val users: Users? = null
+    var users: Users, // 불변성 유지
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cocktail_id", nullable = false)
-    @ToString.Exclude
-    private val cocktails: Cocktails? = null
+    var cocktails: Cocktails // 불변성 유지
+) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long? = null // 불변성 유지
 
     @CreationTimestamp
     @Column(updatable = false)
-    private var createdAt: LocalDateTime? = null
+    protected var createdAt: LocalDateTime? = null // 내부에서만 수정 가능
 
     @UpdateTimestamp
-    private val updatedAt: LocalDateTime? = null
+    protected var updatedAt: LocalDateTime? = null // 내부에서만 수정 가능
+
+    // JPA 기본 생성자
+    constructor() : this(
+        users = Users(), // 기본값
+        cocktails = Cocktails() // 기본값
+    )
 }
