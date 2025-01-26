@@ -14,37 +14,53 @@ import org.springframework.web.servlet.ModelAndView
 class AdminCommentWebController(private val adminCommentService: AdminCommentService) {
     @GetMapping("")
     fun admin_comment(
-        mv: ModelAndView,
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "10") size: Int
     ): ModelAndView {
         val pageable: Pageable = PageRequest.of(page - 1, size)
         val commentResponses = adminCommentService.findAllComments(pageable)
-        mv.addObject("comments", commentResponses.content)
-        mv.addObject("totalPages", commentResponses.totalPages)
-        mv.addObject("page", commentResponses.number + 1)
-        mv.viewName = "admin/comments"
-        return mv
+
+        val totalPages = commentResponses.totalPages
+        val currentPage = commentResponses.number + 1
+        val maxPagesToShow = 10
+        val startPage = if (totalPages <= maxPagesToShow) 1
+        else maxOf(1, ((currentPage - 1) / maxPagesToShow) * maxPagesToShow + 1)
+        val endPage = if (totalPages <= maxPagesToShow) totalPages
+        else minOf(startPage + maxPagesToShow - 1, totalPages)
+
+        return ModelAndView("admin/comments").apply {
+            addObject("comments", commentResponses.content)
+            addObject("totalPages", totalPages)
+            addObject("page", currentPage)
+            addObject("startPage", startPage)
+            addObject("endPage", endPage)
+        }
     }
 
     @GetMapping("/search")
     fun searchComments(
-        @RequestParam("keyword") keyword: String,
+        @RequestParam("keyword", defaultValue = "") keyword: String,
         @RequestParam(defaultValue = "1") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
-        mv: ModelAndView
+        @RequestParam(defaultValue = "10") size: Int
     ): ModelAndView {
         val pageable: Pageable = PageRequest.of(page - 1, size)
-        mv.addObject("keyword", keyword)
-
         val comments = adminCommentService.searchByKeyword(keyword, pageable)
 
+        val totalPages = comments.totalPages
+        val currentPage = comments.number + 1
+        val maxPagesToShow = 10
+        val startPage = if (totalPages <= maxPagesToShow) 1
+        else maxOf(1, ((currentPage - 1) / maxPagesToShow) * maxPagesToShow + 1)
+        val endPage = if (totalPages <= maxPagesToShow) totalPages
+        else minOf(startPage + maxPagesToShow - 1, totalPages)
 
-        mv.addObject("comments", comments.content)
-        mv.addObject("totalPages", comments.totalPages)
-        mv.addObject("page", comments.number + 1)
-
-        mv.viewName = "admin/comments"
-        return mv
+        return ModelAndView("admin/comments").apply {
+            addObject("comments", comments.content)
+            addObject("totalPages", totalPages)
+            addObject("page", currentPage)
+            addObject("startPage", startPage)
+            addObject("endPage", endPage)
+            addObject("keyword", keyword)
+        }
     }
 }

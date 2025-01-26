@@ -31,30 +31,51 @@ class AdminUserWebController(
         val userResponsePage: Page<UserResponse> =
             adminUserService.findAllByAuthoritiesRole("ROLE_USER", pageable)
 
+        val totalPages = userResponsePage.totalPages
+        val currentPage = userResponsePage.number + 1
+        val maxPagesToShow = 10
+
+        val startPage = if (totalPages <= maxPagesToShow) 1
+        else maxOf(1, ((currentPage - 1) / maxPagesToShow) * maxPagesToShow + 1)
+        val endPage = if (totalPages <= maxPagesToShow) totalPages
+        else minOf(startPage + maxPagesToShow - 1, totalPages)
+
         return ModelAndView("admin/users").apply {
             addObject("users", userResponsePage.content)
-            addObject("totalPages", userResponsePage.totalPages)
-            addObject("page", userResponsePage.number + 1)
+            addObject("totalPages", totalPages)
+            addObject("page", currentPage)
+            addObject("startPage", startPage)
+            addObject("endPage", endPage)
         }
     }
 
     @GetMapping("/search")
     fun searchUsers(
-        @RequestParam("keyword") keyword: String,
+        @RequestParam("keyword", defaultValue = "") keyword: String,
         @RequestParam(defaultValue = "1") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
-        model: Model
-    ): String {
+        @RequestParam(defaultValue = "10") size: Int
+    ): ModelAndView {
         val pageable: Pageable = PageRequest.of(page - 1, size)
         log.info("keyword: {}", keyword)
-        model.addAttribute("keyword", keyword)
 
         val userPage = adminUserService.searchByKeyword(keyword, pageable)
 
-        model.addAttribute("users", userPage.content)
-        model.addAttribute("totalPages", userPage.totalPages)
-        model.addAttribute("page", userPage.number + 1)
+        val totalPages = userPage.totalPages
+        val currentPage = userPage.number + 1
+        val maxPagesToShow = 10
+        val startPage = if (totalPages <= maxPagesToShow) 1
+        else maxOf(1, ((currentPage - 1) / maxPagesToShow) * maxPagesToShow + 1)
+        val endPage = if (totalPages <= maxPagesToShow) totalPages
+        else minOf(startPage + maxPagesToShow - 1, totalPages)
 
-        return "admin/users"
+        return ModelAndView("admin/users").apply {
+            addObject("users", userPage.content)
+            addObject("totalPages", totalPages)
+            addObject("page", currentPage)
+            addObject("startPage", startPage)
+            addObject("endPage", endPage)
+            addObject("keyword", keyword)
+        }
     }
+
 }
