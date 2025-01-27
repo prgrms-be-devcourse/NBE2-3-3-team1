@@ -144,4 +144,10 @@ class GlobalExceptionHandler {
         log.error("[Exception] message: {}, cause: {}", e.message, e.cause)
         return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error")
     }
+
+    // 세션 인증 실패시 에러
+    @ExceptionHandler(UnauthorizedException::class)
+    fun handleUnauthorizedException() : ResponseEntity<ApiResponse<Any>> {
+        return createErrorResponse(HttpStatus.UNAUTHORIZED, "UnAuthorizedException Error")
+    }
 }
