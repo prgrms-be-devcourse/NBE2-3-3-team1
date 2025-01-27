@@ -83,8 +83,8 @@ class GlobalExceptionHandler {
      */
     @ExceptionHandler(BadRequestException::class)
     fun handleBadRequestException(e: BadRequestException): ResponseEntity<ApiResponse<Any>> {
-        val httpStatus = e.errorCode?.let { HttpStatus.resolve(it.status) } ?: HttpStatus.INTERNAL_SERVER_ERROR
-        val message = e.errorCode?.message ?: "An unexpected error occurred"
+        val httpStatus = e.errorCode.let { HttpStatus.resolve(it.status) } ?: HttpStatus.INTERNAL_SERVER_ERROR
+        val message = e.errorCode.message ?: "An unexpected error occurred"
         return createErrorResponse(httpStatus, message)
     }
 
