@@ -1,5 +1,8 @@
 package org.programmers.cocktail.search.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.programmers.cocktail.elasticsearch.elasticsearch.ElasticsearchClientComponent
+import org.programmers.cocktail.elasticsearch.elasticsearch.ElasticsearchQueryBuilder
 import org.programmers.cocktail.search.dto.CocktailsTO
 import org.programmers.cocktail.search.service.CocktailExternalApiService
 import org.programmers.cocktail.search.service.CocktailsService
@@ -9,6 +12,7 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import java.io.IOException
 
 @Controller
 class SearchHtmlController {
@@ -22,23 +26,25 @@ class SearchHtmlController {
     @RequestMapping("/search")
     fun getCocktailSearchPage(model: Model?): String {
         // Word Cloud 생성후 전송
-//        ElasticsearchClientComponent elasticSearchClientComponent = new ElasticsearchClientComponent();
-//        ElasticsearchQueryBuilder queryBuilder = new ElasticsearchQueryBuilder(elasticSearchClientComponent);
-//
-//        try {
-//            ObjectMapper objectMapper = new ObjectMapper();
-//
-//            model.addAttribute("male20sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Male", "20")));
-//            model.addAttribute("male30sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Male", "30")));
-//            model.addAttribute("male40sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Male", "40")));
-//            model.addAttribute("female20sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Female", "20")));
-//            model.addAttribute("female30sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Female", "30")));
-//            model.addAttribute("female40sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Female", "40")));
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+        val elasticSearchClientComponent : ElasticsearchClientComponent = ElasticsearchClientComponent()
+        val queryBuilder : ElasticsearchQueryBuilder = ElasticsearchQueryBuilder(elasticSearchClientComponent)
 
-        return "user/search1"
+        return try {
+            val objectMapper = ObjectMapper()
+
+            model?.apply {
+                addAttribute("male20sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Male", "20")))
+                addAttribute("male30sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Male", "30")))
+                addAttribute("male40sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Male", "40")))
+                addAttribute("female20sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Female", "20")))
+                addAttribute("female30sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Female", "30")))
+                addAttribute("female40sWordCloudMap", objectMapper.writeValueAsString(queryBuilder.fetchWordCloudData("Female", "40")))
+            }
+
+            "user/search1"
+        } catch (e: IOException) {
+            throw RuntimeException(e)
+        }
     }
 
     // 검색결과 반환
