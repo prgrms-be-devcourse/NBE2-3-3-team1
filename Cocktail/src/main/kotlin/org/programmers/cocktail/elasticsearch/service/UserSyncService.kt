@@ -4,6 +4,8 @@ import co.elastic.clients.elasticsearch.core.BulkRequest
 import co.elastic.clients.elasticsearch.core.bulk.BulkOperation
 import co.elastic.clients.elasticsearch.core.BulkResponse
 import co.elastic.clients.elasticsearch.core.bulk.IndexOperation
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import jakarta.transaction.Transactional
 import org.programmers.cocktail.elasticsearch.dto.ElasticsearchRequest
 import org.programmers.cocktail.elasticsearch.elasticsearch.ElasticsearchClientComponent
@@ -24,7 +26,7 @@ class UserSyncService(
     private val usersRepository: UsersRepository,
     private val cocktailsRepository: CocktailsRepository,
     private val cocktailLikesRepository: CocktailLikesRepository,
-    private val commentsRepository: CommentsRepository
+    private val commentsRepository: CommentsRepository,
 ) {
     private var lastSyncTime: LocalDateTime? = null
 
@@ -32,6 +34,10 @@ class UserSyncService(
         private val logger = LoggerFactory.getLogger(UserSyncService::class.java)
         private const val BATCH_SIZE = 10_000
         private const val SYNC_INTERVAL = 60_000L // 1 minute
+    }
+
+    val objectMapper = ObjectMapper().apply {
+        registerModule(JavaTimeModule())
     }
 
     @Transactional
