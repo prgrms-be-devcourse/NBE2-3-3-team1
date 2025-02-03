@@ -2,11 +2,6 @@ package org.programmers.cocktail.suggestion.dto
 
 import lombok.*
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 data class CocktailsTO(
     val id: Long? = null,
     val name: String? = null,
